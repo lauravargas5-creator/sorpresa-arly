@@ -206,7 +206,6 @@
 
             song.volume = 0.5;
             song.play().catch(e => console.log("Interacción requerida"));
-            setTimeout(() => { song.pause(); song.currentTime = 0; }, 10000); 
 
             const duration = 3000;
             const end = Date.now() + duration;
@@ -226,6 +225,7 @@
     </script>
 </body>
 </html>
+
 
 
 
