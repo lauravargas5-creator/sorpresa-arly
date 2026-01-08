@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños Arly!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --blue-bg: #AEC6CF; 
+            --gold: #D4AF37;    
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background-color: #121212; 
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 2.5s ease-in-out; 
+            overflow-x: hidden;
+        }
+
+        body.party-on {
+            background-color: var(--blue-bg) !important;
+            color: #222 !important;
+        }
+
+        .container {
+            max-width: 900px;
+            text-align: center;
+            padding: 60px 20px;
+            z-index: 2;
+        }
+
+        /* TIPOGRAFÍA */
+        h1 {
+            font-size: 3.8rem;
+            color: var(--gold);
+            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 3px 3px 4px rgba(0,0,0,0.4); 
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            font-weight: 900;
+        }
+
+        /* CONTENEDOR DEL PASTEL */
+        .cake-container {
+            position: relative;
+            width: 380px; 
+            height: 380px;
+            margin: 30px auto 80px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .cake-container:hover { transform: scale(1.03) rotate(1deg); }
+        .cake-svg { width: 100%; height: auto; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.4)); }
+
+        /* GUÍA FLOTANTE */
+        .click-guide {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: white; color: var(--gold); padding: 10px 20px; border-radius: 25px;
+            font-size: 1rem; font-weight: bold; pointer-events: none; 
+            box-shadow: 0 0 15px var(--gold); border: 2px solid var(--gold);
+            animation: float 1.5s infinite ease-in-out; z-index: 20; white-space: nowrap;
+        }
+        .click-guide::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+            border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid var(--gold);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* LLAMA ANIMADA */
+        .flame-position { position: absolute; top: 65px; left: 50%; transform: translateX(-50%); z-index: 10; }
+        .flame {
+            width: 20px; height: 30px;
+            background: radial-gradient(ellipse at bottom, #ffff00 0%, #ff9900 60%, #ff0000 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 -5px 20px #ff9900, 0 0 15px #ffff00 inset;
+            animation: burn 0.1s infinite alternate; transform-origin: center bottom;
+        }
+        @keyframes burn {
+            0% { transform: scale(1) skewX(0deg); opacity: 0.9; }
+            50% { transform: scale(1.05) skewX(-2deg); opacity: 1; }
+            100% { transform: scale(1) skewX(2deg); opacity: 0.9; }
+        }
+
+        /* SECCIONES Y FRAMES */
+        .section-title {
+            margin-top: 120px; color: var(--gold); font-size: 2.5rem;
+            text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 2px 2px 3px rgba(0,0,0,0.3);
+            border-bottom: 3px solid white; display: inline-block; padding-bottom: 15px; font-weight: bold;
+        }
+
+        .websim-frame {
+            width: 100%; height: 650px; /* Altura ajustada para el juego de estrellas */
+            border: none; border-radius: 20px; margin: 40px 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            background: #000; /* Fondo negro para que combine con el juego */
+            overflow: hidden;
+        }
+
+        /* MODAL */
+        #celebration-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); justify-content: center; align-items: center;
+            z-index: 1000; backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #fff, #fff5f8); padding: 50px; border-radius: 40px;
+            text-align: center; border: 4px solid var(--gold); max-width: 600px;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.5); animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .close-btn {
+            margin-top: 30px; padding: 15px 45px; border: none;
+            background: linear-gradient(to right, var(--gold), #e6c35c); color: white;
+            font-size: 1.1rem; border-radius: 50px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4); transition: transform 0.2s;
+        }
+        .close-btn:hover { transform: scale(1.05); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="lights-off">
+
+    <audio id="birthday-song" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    <div class="container">
+        <h1>¡Pide un deseo, Arly!</h1>
+        
+        <div class="cake-container" onclick="celebrate()">
+            <div class="click-guide" id="guide-msg">👇 ¡Toca la vela! 👇</div>
+            <div class="flame-position" id="flame-container"><div class="flame"></div></div>
+            
+            <svg class="cake-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+                <defs>
+                    <pattern id="stripes" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="rotate(45)">
+                        <rect width="10" height="40" transform="translate(0,0)" fill="#F48FB1"/> 
+                        <rect width="10" height="40" transform="translate(10,0)" fill="#FFF59D"/> 
+                    </pattern>
+                    <linearGradient id="cakeBody" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#5D4037" /><stop offset="50%" style="stop-color:#795548" /><stop offset="100%" style="stop-color:#5D4037" />
+                    </linearGradient>
+                    <linearGradient id="frosting" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4E342E" /><stop offset="100%" style="stop-color:#3E2723" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="250" cy="400" rx="190" ry="60" fill="#EFEBE9"/>
+                <ellipse cx="250" cy="395" rx="180" ry="55" fill="#D7CCC8"/>
+                <g transform="translate(0, 20)">
+                    <circle cx="100" cy="370" r="25" fill="#F8BBD0"/><circle cx="140" cy="385" r="25" fill="#B39DDB"/> 
+                    <circle cx="190" cy="395" r="25" fill="#FFF59D"/><circle cx="250" cy="400" r="25" fill="#C8E6C9"/> 
+                    <circle cx="310" cy="395" r="25" fill="#81D4FA"/><circle cx="360" cy="385" r="25" fill="#F8BBD0"/> 
+                    <circle cx="400" cy="370" r="25" fill="#B39DDB"/> 
+                </g>
+                <ellipse cx="250" cy="350" rx="150" ry="50" fill="#3E2723"/>
+                <path d="M100,230 V350 A150,50 0 0,0 400,350 V230 Z" fill="url(#cakeBody)"/>
+                <ellipse cx="250" cy="230" rx="150" ry="50" fill="#795548"/>
+                <path d="M100,230 C100,230 120,300 150,230 C170,180 190,300 220,230 C240,180 260,320 290,230 C310,180 340,300 370,230 C390,180 400,230 400,230 A150,50 0 0,1 100,230 Z" fill="url(#frosting)"/>
+                <ellipse cx="250" cy="230" rx="148" ry="48" fill="#4E342E"/>
+                <g fill="#FFEB3B"><circle cx="200" cy="210" r="4"/><circle cx="280" cy="240" r="4"/><circle cx="250" cy="200" r="4"/></g>
+                <g fill="#4FC3F7"><circle cx="230" cy="220" r="4"/><circle cx="300" cy="210" r="4"/><circle cx="180" cy="230" r="4"/></g>
+                <g fill="#F48FB1"><circle cx="260" cy="230" r="4"/><circle cx="320" cy="220" r="4"/><circle cx="220" cy="250" r="4"/></g>
+                <rect x="240" y="130" width="20" height="100" rx="3" fill="url(#stripes)" stroke="#E0E0E0" stroke-width="1"/>
+                <rect x="248" y="115" width="4" height="15" fill="#333" rx="1"/>
+            </svg>
+        </div>
+
+        <h2 class="section-title">✨ Tus Flores Eternas</h2>
+        <iframe class="websim-frame" src="flores.html" loading="lazy"></iframe>
+
+        <h2 class="section-title">✨ Un Juego Especial</h2>
+        <iframe class="websim-frame" src="TU_LINK_DE_JUEGO_AQUI" loading="lazy"></iframe>
+    </div>
+
+    <div id="celebration-modal">
+        <div class="modal-content">
+            <h1 style="color: var(--gold); text-shadow: none; margin-top: 0;">✨ ¡Feliz Cumpleaños Arly! ✨</h1>
+            <p style="font-size: 1.4rem; color: #555; line-height: 1.6;">
+                Arly, eres la luz que ilumina nuestros días y el motivo de nuestra alegría más sincera.
+                <br><br>
+                <b style="color: var(--gold);">¡Que todos tus deseos se cumplan hoy y siempre! Te queremos.</b>
+            </p>
+            <button class="close-btn" onclick="closeModal()">Continuar celebrando</button>
+        </div>
+    </div>
+
+    <script>
+        function celebrate() {
+            const song = document.getElementById('birthday-song');
+            const flameContainer = document.getElementById('flame-container');
+            const guideMsg = document.getElementById('guide-msg');
+            
+            if (flameContainer.classList.contains('hidden')) return;
+
+            flameContainer.classList.add('hidden');
+            guideMsg.classList.add('hidden');
+            document.body.classList.add('party-on');
+
+            song.volume = 0.5;
+            song.play().catch(e => console.log("Interacción requerida"));
+            setTimeout(() => { song.pause(); song.currentTime = 0; }, 10000); 
+
+            const duration = 3000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#D4AF37', '#AEC6CF', '#F06292', '#FFFFFF'] });
+                confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#D4AF37', '#AEC6CF', '#F06292', '#FFFFFF'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+
+            setTimeout(() => { document.getElementById('celebration-modal').style.display = 'flex'; }, 1500);
+        }
+
+        function closeModal() {
+            document.getElementById('celebration-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
