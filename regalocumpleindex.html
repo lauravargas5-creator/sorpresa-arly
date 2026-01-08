@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños Arly!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pink: #ff85a1;
+            --dark-pink: #f06292;
+            --bg-dark: #0a0a0b;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 1.5s ease, color 1.5s ease;
+        }
+
+        .lights-off { background-color: #050505; }
+
+        .container {
+            max-width: 900px;
+            text-align: center;
+            padding: 40px 20px;
+            z-index: 2;
+        }
+
+        h1 { font-size: 2.5rem; color: var(--pink); margin-bottom: 10px; }
+
+        /* EL PASTEL */
+        .cake-container {
+            position: relative;
+            margin: 60px auto;
+            cursor: pointer;
+            width: 200px;
+        }
+
+        .cake {
+            width: 200px;
+            height: 100px;
+            background: #a1887f;
+            border-radius: 10px 10px 0 0;
+            position: relative;
+            box-shadow: 0 10px 0 #8d6e63;
+        }
+
+        .frosting {
+            width: 210px;
+            height: 40px;
+            background: #fce4ec;
+            border-radius: 20px;
+            position: absolute;
+            top: -10px;
+            left: -5px;
+        }
+
+        .candle {
+            width: 12px;
+            height: 40px;
+            background: #fff176;
+            position: absolute;
+            top: -50px;
+            left: 94px;
+            border-radius: 3px;
+        }
+
+        .flame {
+            width: 16px;
+            height: 26px;
+            background: radial-gradient(circle, #ffeb3b, #ff9800);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: -28px;
+            left: -2px;
+            box-shadow: 0 0 20px #ff9800;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        @keyframes flicker {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* MODAL */
+        #celebration-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            color: #333;
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px var(--pink);
+            max-width: 80%;
+        }
+
+        .close-btn {
+            margin-top: 25px;
+            padding: 12px 30px;
+            border: none;
+            background: var(--dark-pink);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* IFRAMES DE WEBSIM */
+        .section-title { margin-top: 50px; color: var(--pink); }
+        .websim-frame {
+            width: 100%;
+            height: 500px;
+            border: 2px solid var(--pink);
+            border-radius: 15px;
+            margin: 20px 0;
+            background: #1a1a1a;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="lights-off">
+
+    <audio id="birthday-song" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+
+    <div class="container" id="main-content">
+        <h1>Para la novia más especial...</h1>
+        <p id="instruction">Apaga la vela para empezar la sorpresa</p>
+
+        <div class="cake-container" onclick="celebrate()">
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+            <div class="cake"><div class="frosting"></div></div>
+        </div>
+
+        <h2 class="section-title">Tus Flores Eternas</h2>
+        <iframe class="websim-frame" src="TU_LINK_DE_FLORES_AQUI"></iframe>
+
+        <h2 class="section-title">Un Juego para Ti</h2>
+        <iframe class="websim-frame" src="TU_LINK_DE_JUEGO_AQUI"></iframe>
+    </div>
+
+    <div id="celebration-modal">
+        <div class="modal-content">
+            <h1 style="color: #e91e63; margin: 0;">✨ ¡Feliz Cumpleaños Arly mi vida! ✨</h1>
+            <p style="font-size: 1.2rem; line-height: 1.6;">Eres lo más hermoso que ha pasado por nuestras vidas. ¡Disfruta tu día!</p>
+            <button class="close-btn" onclick="closeModal()">Seguir viendo</button>
+        </div>
+    </div>
+
+    <script>
+        function celebrate() {
+            const song = document.getElementById('birthday-song');
+            const flame = document.getElementById('flame');
+            
+            // 1. Apagar llama
+            flame.classList.add('hidden');
+            
+            // 2. Encender luces y música
+            document.body.classList.remove('lights-off');
+            document.body.style.backgroundColor = "#fff0f3";
+            document.body.style.color = "#444";
+            song.play();
+
+            // 3. Confeti
+            confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
+
+            // 4. Mostrar mensaje
+            setTimeout(() => {
+                document.getElementById('celebration-modal').style.display = 'flex';
+            }, 800);
+        }
+
+        function closeModal() {
+            document.getElementById('celebration-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
