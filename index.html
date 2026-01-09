@@ -141,7 +141,7 @@
 </head>
 <body class="lights-off">
 
-    <audio id="birthday-song" src="https://ia800301.us.archive.org/13/items/LasMananitasMariachi/Las%20Ma%C3%B1anitas%20-%20Mariachi.mp3"></audio>
+    <audio id="birthday-song" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
     <button id="music-control" class="music-btn hidden" onclick="toggleMusic()">⏸️ Pausar Música</button>
 
@@ -223,6 +223,7 @@
 
             song.volume = 0.5;
             song.play().catch(e => console.log("Interacción requerida"));
+            setTimeout(() => { song.pause(); song.currentTime = 0; }, 10000);
 
             const duration = 3000;
             const end = Date.now() + duration;
@@ -256,5 +257,6 @@
     </script>
 </body>
 </html>
+
 
 
